@@ -4,16 +4,16 @@ namespace Stk2k\File\Filter;
 use Stk2k\File\FileFilterInterface;
 use Stk2k\File\File;
 
-class RegExFileFilter implements FileFilterInterface
+class WildcardFileFilter implements FileFilterInterface
 {
     private $pattern;
     private $extension;
-
+    
     /**
      * Construct object
      *
      * @param string $pattern        regular expression pattern
-     * @param string $extension      file extension which is ignored in pattern matching.
+     * @param string|null $extension      file extension which is ignored in pattern matching.
      */
     public function __construct(string $pattern, string $extension = NULL )
     {
@@ -40,10 +40,9 @@ class RegExFileFilter implements FileFilterInterface
         $suffix = $this->extension ? '.' . $this->extension : NULL;
         $name = $suffix ? $file->getName($suffix) : $file->getName();
 
-        if ( preg_match( $this->pattern, $name ) ){
+        if ( fnmatch( $this->pattern, $name ) ){
             return TRUE;
         }
-
         return FALSE;
     }
 }

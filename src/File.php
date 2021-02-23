@@ -17,9 +17,9 @@ class File
      *    Construct object
      *
      * @param string $file_name    Name of the file or directory.
-     * @param File $parent    Parent object
+     * @param File|null $parent    Parent object
      */
-    public function __construct( $file_name, $parent = NULL )
+    public function __construct( string $file_name, File $parent = NULL )
     {
         $parent_path = $parent instanceof File ? $parent->getPath() : $parent;
         $this->path = $parent_path ? rtrim($parent_path,self::DS) . self::DS . $file_name : $file_name;
@@ -115,7 +115,7 @@ class File
      *
      * @return bool
      */
-    private static function removeDirectoryRecursive($path) : bool
+    private static function removeDirectoryRecursive(string $path) : bool
     {
         if ( !file_exists($path) ){
             return true;
@@ -273,9 +273,7 @@ class File
      */
     public function getName( $suffix = NULL ) : string
     {
-        $name = $suffix ? basename( $this->path, $suffix ) : basename( $this->path );
-
-        return $name;
+        return $suffix ? basename( $this->path, $suffix ) : basename( $this->path );
     }
 
     /**
@@ -291,11 +289,11 @@ class File
     /**
      *  Child of the file or directory
      *
-     * @param String|string $file_or_dir_name
+     * @param string $file_or_dir_name
      *
      * @return File
      */
-    public function getChild( $file_or_dir_name ) : File
+    public function getChild( string $file_or_dir_name ) : File
     {
         return new File( $this->path . self::DS . $file_or_dir_name );
     }
@@ -348,7 +346,7 @@ class File
      *
      * @throws FileOutputException
      */
-    public function putContents( $contents, $ex_lock = false ) : int
+    public function putContents( string $contents, bool $ex_lock = false ) : int
     {
         $flags = $ex_lock ? LOCK_EX : 0;
         $res = file_put_contents( $this->path, $contents, $flags );
@@ -365,7 +363,7 @@ class File
      *
      * @throws FileRenameException
      */
-    public function rename( $new_file )
+    public function rename( File $new_file )
     {
         $res = @rename( $this->path, $new_file->getPath() );
         if ( $res === FALSE ){
@@ -383,7 +381,7 @@ class File
      *
      * @throws MakeFileException|MakeDirectoryException
      */
-    public function makeFile( $mode, $contents )
+    public function makeFile( string $mode, string $contents )
     {
         $parent_dir = $this->getParent();
 
@@ -438,11 +436,11 @@ class File
     {
         $path = $this->path;
 
-        if ( !file_exists($path) )    return NULL;
+        if ( !file_exists($path) )    return [];
 
-        if ( !is_readable($path) )    return NULL;
+        if ( !is_readable($path) )    return [];
 
-        if ( is_file($path) )    return NULL;
+        if ( is_file($path) )    return [];
 
         $files = array();
 
@@ -475,11 +473,11 @@ class File
     /**
      *  Update last modified date of the file
      *
-     * @param int|Integer $time      time value to set
+     * @param int|null $time      time value to set
      *
      * @return bool
      */
-    public function touch( $time = NULL ) : bool
+    public function touch( int $time = NULL ) : bool
     {
         if ( $time === NULL ){
             return touch( $this->path );

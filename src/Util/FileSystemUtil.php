@@ -83,7 +83,7 @@ class FileSystemUtil
      *
      * @return string
      */
-    public static function getExtension($path)
+    public static function getExtension(string $path) : string
     {
         $info = pathinfo($path);
         return isset($info['extension']) ? $info['extension'] : '';

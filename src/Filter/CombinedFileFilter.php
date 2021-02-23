@@ -14,7 +14,7 @@ class CombinedFileFilter implements FileFilterInterface
      *
      * @param FileFilterInterface[] $filters      Array of file filters. All of the elements must implement Charcoal_IFileFilter interface.
      */
-    public function __construct( $filters )
+    public function __construct( array $filters )
     {
         $this->filters = $filters;
     }
